@@ -88,7 +88,7 @@ export async function renderMix(opts: RenderOptions): Promise<void> {
             args: string[];
         }
 
-        const tasks: RenderTask[] = [];
+        const tasks: (RenderTask & { success?: boolean })[] = [];
         let totalWeight = 0;
 
         // Safety cap helper
@@ -216,8 +216,15 @@ export async function renderMix(opts: RenderOptions): Promise<void> {
                     filterGraphA = `[0:a]atrim=start=${osS}:end=${osE},asetpts=PTS-STARTPTS,aresample=${sample_rate},aformat=sample_fmts=s16:channel_layouts=stereo,afade=t=out:st=0:d=${stopDur}:curve=exp[a0];`;
                     filterGraphB = `[1:a]atrim=start=${isS}:end=${isE},asetpts=PTS-STARTPTS,aresample=${sample_rate},aformat=sample_fmts=s16:channel_layouts=stereo,atempo=${warpRatio}[a1];`;
                 } else {
-                    filterGraphA = `[0:a]atrim=start=${osS}:end=${osE},asetpts=PTS-STARTPTS,aresample=${sample_rate},aformat=sample_fmts=s16:channel_layouts=stereo,afade=t=out:st=0:d=${dS}:curve=qsin[a0];`;
-                    filterGraphB = `[1:a]atrim=start=${isS}:end=${isE},asetpts=PTS-STARTPTS,aresample=${sample_rate},aformat=sample_fmts=s16:channel_layouts=stereo,atempo=${warpRatio},afade=t=in:st=0:d=${dS}:curve=qsin[a1];`;
+                    // Default Transition: Low EQ Swap (Phase 20)
+                    // We swap the low-end by high-passing both tracks at the crossover point
+                    // Track A: bass sweeps out (high-pass up)
+                    // Track B: bass sweeps in (high-pass down)
+                    const hp_a = `highpass=f=200*t/${dS}`;
+                    const hp_b = `highpass=f=200*(1-t/${dS})`;
+
+                    filterGraphA = `[0:a]atrim=start=${osS}:end=${osE},asetpts=PTS-STARTPTS,aresample=${sample_rate},aformat=sample_fmts=s16:channel_layouts=stereo,${hp_a},afade=t=out:st=0:d=${dS}:curve=qsin[a0];`;
+                    filterGraphB = `[1:a]atrim=start=${isS}:end=${isE},asetpts=PTS-STARTPTS,aresample=${sample_rate},aformat=sample_fmts=s16:channel_layouts=stereo,atempo=${warpRatio},${hp_b},afade=t=in:st=0:d=${dS}:curve=qsin[a1];`;
                 }
 
                 const filterComplexStr = filterGraphA + filterGraphB + `[a0][a1]amix=inputs=2:duration=longest:normalize=0,aformat=sample_fmts=s16:channel_layouts=stereo[out]`;
@@ -253,16 +260,18 @@ export async function renderMix(opts: RenderOptions): Promise<void> {
                     }
                     proc.on('close', (code) => {
                         if (code === 0) {
+                            task.success = true;
                             completedWeight += task.weight;
                             // Reserve last 5% for the fast concat stage
                             const pct = Math.round((completedWeight / totalWeight) * 95);
                             onProgress?.(pct, task.title);
                             resolve();
                         } else {
-                            console.error(`Render error with args: ${task.args.join(' ')}`);
+                            console.error(`Render error with code ${code} for: ${task.title}`);
                             if (stderrData) console.error(`FFmpeg stderr: ${stderrData.slice(-500)}`);
                             // DO NOT reject — skip this segment gracefully to prevent process crash
                             console.warn(`[Render] Skipping failed segment: ${task.title}`);
+                            task.success = false;
                             resolve();
                         }
                     });
@@ -284,10 +293,18 @@ export async function renderMix(opts: RenderOptions): Promise<void> {
         const concatListPath = path.join(tmpDir, 'concat.txt');
         let concatContent = '';
         for (const task of tasks) {
-            // Forward slashes and escaped single quotes are required by concat demuxer
-            const safePath = task.filename.replace(/\\/g, '/').replace(/'/g, "'\\''");
-            concatContent += `file '${safePath}'\n`;
+            if (!task.success || !fs.existsSync(task.filename)) continue;
+
+            // FFmpeg Concat Demuxer Escaping Rules:
+            // 1. Path MUST be in single quotes
+            // 2. Any internal single quotes MUST be escaped as '''' (four single quotes) or similar
+            // 3. Backslashes MUST be escaped or converted to forward slashes.
+            const escapedPath = task.filename
+                .replace(/\\/g, '/')   // Convert to forward slash
+                .replace(/'/g, "\\'"); // Escape single quote for FFmpeg demuxer spec
+            concatContent += `file '${escapedPath}'\n`;
         }
+        if (!concatContent) throw new Error('No audio segments were successfully rendered.');
         fs.writeFileSync(concatListPath, concatContent);
 
         const qualArgs = QUALITY_SETTINGS[format][quality];
