@@ -1,0 +1,59 @@
+node_modules/
+dist/
+dist-electron/
+release/
+out/
+target/
+
+# Databases
+*.db
+*.sqlite
+*.db-shm
+*.db-wal
+temp.db
+aidj.db
+library.db
+
+# Logs & temp
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+tmp/
+temp/
+out.txt
+
+# Media & testing
+*.mp3
+*.wav
+*.m4a
+*.flac
+*.opus
+*177*.png
+renders/
+test_*.py
+check_*.js
+get_failures.js
+fix_db.py
+tmp_db_check.js
+generate_stubs.py
+
+# Env
+.env
+.env.local
+
+# ML Sidecar - ONLY IGNORE PYTORCH CHECKPOINTS, SCRAPED AUDIO, AND ONNX MODELS (Hosted on HF)
+ml-sidecar/data/
+ml-sidecar/build/
+ml-sidecar/models/*.pt
+ml-sidecar/models/*.onnx
+ml-sidecar/models/*.data
+ml-sidecar/models/*.json
+!ml-sidecar/models/.gitkeep
+!ml-sidecar/models/manifest.json
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db

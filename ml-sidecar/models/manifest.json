@@ -1,0 +1,38 @@
+{
+    "version": "1.0.0",
+    "updated": "2026-02-24",
+    "models": {
+        "genre_cnn": {
+            "version": "1.2.0",
+            "file": "genre_cnn_v1.2.0_int8.onnx",
+            "url": "https://huggingface.co/laion/aidj-models/resolve/main/genre_cnn_v1.2.0_int8.onnx",
+            "sha256": "",
+            "size_mb": 12.4,
+            "description": "Dual-Path CNN genre classifier (10 genres, GTZAN + FMA)"
+        },
+        "mood_hubert": {
+            "version": "1.0.3",
+            "file": "mood_hubert_v1.0.3_int8.onnx",
+            "url": "https://huggingface.co/laion/aidj-models/resolve/main/mood_hubert_v1.0.3_int8.onnx",
+            "sha256": "",
+            "size_mb": 89.3,
+            "description": "HuBERT-distilled mood classifier (6 mood classes)"
+        },
+        "clap_audio": {
+            "version": "1.0.0",
+            "file": "clap_audio.onnx",
+            "url": "https://huggingface.co/laion/clap-htsat-unfused/resolve/main/clap_audio.onnx",
+            "sha256": "",
+            "size_mb": 142.0,
+            "description": "CLAP audio encoder for 512-dim similarity embeddings"
+        },
+        "beat_detector": {
+            "version": "1.0.0",
+            "file": "beat_detector_v1.0.0.onnx",
+            "url": "https://huggingface.co/laion/aidj-models/resolve/main/beat_detector_v1.0.0.onnx",
+            "sha256": "",
+            "size_mb": 6.1,
+            "description": "Onset detection + beat tracking (TCN-based)"
+        }
+    }
+}

@@ -1,0 +1,58 @@
+name: Build
+on:
+  push:
+    tags: ['v*.*.*']
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          pip install -r ml-sidecar/requirements.txt pyinstaller
+
+      - name: Download Models
+        run: python scripts/download_models.py
+        env:
+          MODELS_CDN_BASE: ${{ secrets.MODELS_CDN_URL }}
+
+      - name: Bundle Python Sidecar
+        run: |
+          cd ml-sidecar
+          pyinstaller main.py --onefile --name aidj-ml --add-data "models:models"
+          mkdir -p ../resources
+          cp dist/aidj-ml* ../resources/
+
+      - name: Build Electron App
+        run: npm run electron:build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: AI-DJ-${{ matrix.os }}
+          path: dist/*.exe, dist/*.dmg

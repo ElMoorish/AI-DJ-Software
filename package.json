@@ -1,0 +1,138 @@
+{
+  "name": "ai-dj",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist-electron/src-electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build && tsc -p tsconfig.electron.json",
+    "electron:dev": "tsc -p tsconfig.electron.json && concurrently \"npm run dev\" \"wait-on http://localhost:1420 && electron .\"",
+    "electron:build": "npm run build && electron-builder",
+    "dist": "npm run build && electron-builder --publish=never",
+    "dist:win": "npm run build && electron-builder --win --publish=never",
+    "dist:linux": "npm run build && electron-builder --linux --publish=never",
+    "dist:all": "npm run build && electron-builder --win --linux --publish=never",
+    "prebuild:sidecar": "python ml-sidecar/build_sidecar.py --check",
+    "build:sidecar": "python ml-sidecar/build_sidecar.py",
+    "test": "vitest",
+    "lint": "eslint src --ext ts,tsx"
+  },
+  "build": {
+    "appId": "com.aidj.app",
+    "productName": "AI DJ",
+    "copyright": "Copyright © 2025 AI DJ",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "ml-sidecar/dist/mlsidecar",
+        "to": "mlsidecar",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico",
+      "publisherName": "AI DJ"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "AI DJ"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "deb",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png",
+      "category": "Audio"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.music"
+    }
+  },
+  "dependencies": {
+    "@qdrant/js-client-rest": "^1.17.0",
+    "@tanstack/react-table": "8.17.3",
+    "@types/uuid": "^10.0.0",
+    "axios": "^1.13.5",
+    "better-sqlite3": "^12.6.2",
+    "clsx": "2.1.1",
+    "keytar": "7.9.0",
+    "konva": "9.3.6",
+    "music-metadata": "^7.14.0",
+    "node-id3": "^0.2.9",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-konva": "18.2.10",
+    "react-virtual": "2.10.4",
+    "recharts": "2.12.7",
+    "tailwind-merge": "2.3.0",
+    "uuid": "^13.0.0",
+    "walkdir": "^0.4.1",
+    "zustand": "4.5.2"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "4.3.1",
+    "autoprefixer": "^10.4.24",
+    "concurrently": "8.2.2",
+    "electron": "30.0.6",
+    "electron-builder": "24.13.3",
+    "eslint": "8.57.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "3.4.4",
+    "typescript": "5.4.5",
+    "vite": "5.3.1",
+    "vitest": "1.6.0",
+    "wait-on": "7.2.0"
+  }
+}

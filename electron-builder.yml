@@ -1,0 +1,71 @@
+appId: com.aidj.desktop
+productName: AI DJ
+copyright: Copyright © 2026 AI DJ
+
+directories:
+  output: dist-electron
+  buildResources: build
+
+files:
+  - dist/**/*
+  - dist-electron/**/*
+  - node_modules/**/*
+  - "!node_modules/*/{CHANGELOG.md,README.md,readme.md,readme}"
+  - "!node_modules/.cache/**"
+
+extraResources:
+  - from: ml-sidecar/
+    to: ml-sidecar/
+    filter:
+      - "**/*.py"
+      - "**/*.json"
+      - "models/**"
+
+# ── Windows ────────────────────────────────────────────────────────────────
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: zip
+      arch: [x64]
+  icon: build/icon.ico
+  # Code signing — set CSC_LINK and CSC_KEY_PASSWORD env vars for a real cert
+  # signingHashAlgorithms: [sha256]
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  installerHeader: build/installerHeader.bmp
+  license: LICENSE.txt
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: AI DJ
+
+# ── macOS (future) ─────────────────────────────────────────────────────────
+mac:
+  target:
+    - target: dmg
+      arch: [x64, arm64]
+  icon: build/icon.icns
+  category: public.app-category.music
+
+dmg:
+  title: AI DJ ${version}
+  icon: build/icon.icns
+
+# ── Linux (future) ─────────────────────────────────────────────────────────
+linux:
+  target: [AppImage, deb]
+  icon: build/icons/
+  category: Audio
+
+# ── Auto-update ────────────────────────────────────────────────────────────
+publish:
+  provider: github
+  owner: your-github-org
+  repo: ai-dj
+
+compression: maximum
+removePackageScripts: true
