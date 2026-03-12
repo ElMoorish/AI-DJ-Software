@@ -34,8 +34,8 @@ To keep the repository lightweight, the pre-trained ONNX models are hosted on **
 1. **Download the models** from: [Themoor/Ai-DJ-Mixer](https://huggingface.co/Themoor/Ai-DJ-Mixer)
 2. Place all `.onnx`, `.onnx.data`, and `.json` files into the `ml-sidecar/models/` directory.
 
-### Quick Install (Cli)
-If you have the HF CLI installed:
+### Quick Install (CLI)
+If you have the [Hugging Face CLI](https://huggingface.co/docs/huggingface_hub/guides/cli) installed:
 ```bash
 hf download Themoor/Ai-DJ-Mixer --local-dir ml-sidecar/models
 ```
@@ -108,10 +108,10 @@ Powered by 512-dim **CLAP embeddings**, allowing you to search your local librar
    pip install -r requirements.txt
    ```
 
-4. **Pull the ONNX Models (Git LFS):**
-   This repository uses Git LFS to host the pre-trained `_int8.onnx` models. Ensure you have [Git LFS installed](https://git-lfs.com/), then run:
+4. **Download the ONNX Models:**
+   The repository is kept lightweight by hosting models on Hugging Face.
    ```bash
-   git lfs pull
+   hf download Themoor/Ai-DJ-Mixer --local-dir ml-sidecar/models
    ```
 
 5. **Run the App:**
@@ -134,5 +134,5 @@ This project builds upon the shoulders of giants in the audio ML notation and El
 
 ---
 <div align="center">
-  <i>Built with 🎵 by modern DJs, for modern DJs.</i>
+  <i>Built with 🎵 by <a href="https://www.moorish.dev">Moorish.dev</a>.</i>
 </div>
