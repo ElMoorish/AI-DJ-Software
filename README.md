@@ -1,5 +1,4 @@
-<div align="center">
-  <img src="https://raw.githubusercontent.com/electron-react-boilerplate/electron-react-boilerplate/main/assets/logo.svg" alt="AI DJ Logo" width="120" />
+  <img src="./assets/logo.png" alt="AI DJ Logo" width="200" />
   <h1>🎛️ AI DJ</h1>
   <p><strong>An open-source, AI-native desktop DJ application running entirely locally.</strong></p>
   
@@ -14,7 +13,7 @@
 
 <div align="center">
   <!-- Place your actual recorded UI GIF here! -->
-  <img src="https://via.placeholder.com/800x450/111118/00d4ff?text=++[Drop+your+Animated+UI+GIF+Here]++" alt="AI DJ Demo" width="100%" style="border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);" />
+  <img src="./assets/library_screenshot.png" alt="AI DJ Demo" width="100%" style="border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);" />
 </div>
 
 ---
@@ -24,7 +23,7 @@
 **AI DJ** brings sophisticated machine learning to automated playlist generation and micro-genre classification. Unlike cloud-based solutions, this app is **Offline-First & SOC2 Compliant**—all audio analysis, AI inference, and rendering happen directly on your machine. Zero audio data leaves your device.
 
 <div align="center">
-  <img src="https://via.placeholder.com/600x200/16161f/6c63ff?text=++[Insert+Mixer/Waveform+Animation]++" alt="Mixer View" style="border-radius: 8px;" />
+  <img src="./assets/library_screenshot.png" alt="Mixer View" style="border-radius: 8px;" />
 </div>
 
 ## 🧠 Model Weights
