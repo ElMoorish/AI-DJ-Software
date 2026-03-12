@@ -1,3 +1,4 @@
+<div align="center">
   <img src="./assets/logo.png" alt="AI DJ Logo" width="200" />
   <h1>🎛️ AI DJ</h1>
   <p><strong>An open-source, AI-native desktop DJ application running entirely locally.</strong></p>
